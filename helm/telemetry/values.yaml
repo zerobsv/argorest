@@ -1,0 +1,26 @@
+prometheus:
+  image: prom/prometheus:v3.2.1
+  service:
+    type: ClusterIP
+    port: 9090
+  storage:
+    size: 5Gi
+
+opensearch:
+  image: opensearchproject/opensearch:2.19.1
+  service:
+    port: 9200
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 250m
+    limits:
+      memory: 2Gi
+      cpu: "1"
+
+jaeger:
+  image: jaegertracing/all-in-one:1.64.0
+  service:
+    uiPort: 16686
+    otlpGrpcPort: 4317
+    otlpHttpPort: 4318

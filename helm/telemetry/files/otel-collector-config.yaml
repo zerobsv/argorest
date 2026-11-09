@@ -1,0 +1,40 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+
+exporters:
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    namespace: document_server
+  otlp/jaeger:
+    endpoint: jaeger.{{ .Release.Namespace }}.svc.cluster.local:4317
+    tls:
+      insecure: true
+  opensearch/traces:
+    http:
+      endpoint: http://opensearch.{{ .Release.Namespace }}.svc.cluster.local:9200
+  opensearch/logs:
+    http:
+      endpoint: http://opensearch.{{ .Release.Namespace }}.svc.cluster.local:9200
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/jaeger, opensearch/traces]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [opensearch/logs]

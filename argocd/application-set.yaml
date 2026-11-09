@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: document-server-staged
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: telemetry
+            chart: telemetry
+            stage: telemetry
+          - name: document-server
+            chart: document-server
+            stage: webserver
+  strategy:
+    type: RollingSync
+    deletionOrder: Reverse
+    rollingSync:
+      steps:
+        - matchExpressions:
+            - key: rollout-stage
+              operator: In
+              values:
+                - telemetry
+        - matchExpressions:
+            - key: rollout-stage
+              operator: In
+              values:
+                - webserver
+  template:
+    metadata:
+      name: "{{name}}"
+      labels:
+        rollout-stage: "{{stage}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/zerobsv/argorest.git
+        targetRevision: main
+        path: helm/{{chart}}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: observability
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true

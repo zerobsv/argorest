@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+data:
+  otel-collector-config.yaml: |
+{{ tpl (.Files.Get "files/otel-collector-config.yaml") . | indent 4 }}

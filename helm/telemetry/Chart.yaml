@@ -1,0 +1,6 @@
+apiVersion: v2
+name: telemetry
+description: Prometheus, OpenSearch, and Jaeger telemetry backends and collector configuration
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: document-server
+description: Document Server REST API with an OpenTelemetry Collector sidecar
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
