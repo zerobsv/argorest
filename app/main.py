@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request, Response, status
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, ConfigDict, Field
 import uvicorn
 from opentelemetry import metrics, trace
@@ -93,6 +94,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 FastAPIInstrumentor.instrument_app(app)
+
+
+@app.get("/", include_in_schema=False)
+def swagger_ui():
+    return RedirectResponse(url=app.docs_url)
 
 
 def record_endpoint(request: Request, started: float, status_code: int) -> None:

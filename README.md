@@ -1,6 +1,6 @@
 # Document Server API
 
-A FastAPI REST API backed by SQLite. FastAPI exposes Swagger UI at `/docs` and OpenAPI JSON at `/openapi.json`.
+A FastAPI REST API backed by SQLite. Opening `/` redirects to the Swagger UI at `/docs`; the OpenAPI JSON is available at `/openapi.json`.
 
 ## Kubernetes deployment with Helm
 
@@ -74,7 +74,8 @@ kubectl -n observability port-forward service/prometheus 9090:9090
 kubectl -n observability port-forward service/jaeger 16686:16686
 ```
 
-Open the API at [http://localhost:8000/docs](http://localhost:8000/docs),
+Open the API at [http://localhost:8000/](http://localhost:8000/) (or
+[http://localhost:8000/docs](http://localhost:8000/docs)),
 Prometheus at [http://localhost:9090](http://localhost:9090), and Jaeger at
 [http://localhost:16686](http://localhost:16686). OpenSearch is available
 inside the cluster at
@@ -105,3 +106,18 @@ The API exports FastAPI request traces, endpoint request counts and durations,
 and endpoint log records over OTLP. Set `DATABASE_PATH` to change the SQLite
 file, or `OTEL_EXPORTER_OTLP_ENDPOINT` to point to another collector. The
 default database path is `documents.db` in the working directory.
+
+
+## Curl Commands
+
+#### POST Command:
+
+```
+curl -X POST http://localhost:8000/documents   -H 'Content-Type: application/json'   -d '{"id":1,"name":"xyz","phone_name":["apple"],"location":"string"}'
+```
+
+#### GET Command:
+
+```
+curl -k http://localhost:8000/document/1
+```
