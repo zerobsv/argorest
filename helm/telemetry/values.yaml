@@ -12,6 +12,9 @@ opensearch:
   image: opensearchproject/opensearch:2.19.1
   service:
     port: 9200
+  persistence:
+    enabled: false
+    size: 4Gi
   resources:
     requests:
       memory: 1Gi

@@ -22,8 +22,18 @@ spec:
               value: single-node
             - name: DISABLE_SECURITY_PLUGIN
               value: "true"
+            - name: OPENSEARCH_SINGLE_NODE
+              value: "true"
             - name: OPENSEARCH_JAVA_OPTS
               value: -Xms512m -Xmx512m
+            - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+              value: "admin"
+            - name: OPENSEARCH_SECURITY_ENABLED
+              value: "false"
+            - name: OPENSEARCH_PERSISTENCE_ENABLED
+              value: "{{ .Values.opensearch.persistence.enabled }}"
+            - name: OPENSEARCH_PERSISTENCE_SIZE
+              value: "{{ .Values.opensearch.persistence.size }}"
           ports:
             - name: http
               containerPort: 9200
