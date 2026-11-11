@@ -22,6 +22,9 @@ spec:
             - bash
             - -c
             - |
+              mkdir -p /prometheus
+              mkdir -p /etc/prometheus
+              touch /etc/prometheus/prometheus.yml
               chmod -R 750 /prometheus
               chown -R 65534:65534 /prometheus
               chmod 440 /etc/prometheus/prometheus.yml
