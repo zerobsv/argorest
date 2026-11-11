@@ -10,8 +10,11 @@ prometheus:
 
 opensearch:
   image: opensearchproject/opensearch:2.19.1
+  dashboards:
+    image: opensearchproject/opensearch-dashboards:2.19.1
   service:
     port: 9200
+    dashboardsPort: 5601
   persistence:
     enabled: false
     size: 4Gi

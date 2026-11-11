@@ -46,6 +46,23 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 10
             failureThreshold: 30
+        - name: opensearch-dashboards
+          image: {{ .Values.opensearch.dashboards.image | quote }}
+          env:
+            - name: OPENSEARCH_HOSTS
+              value: '["http://localhost:9200"]'
+            - name: DISABLE_SECURITY_DASHBOARDS_PLUGIN
+              value: "true"
+          ports:
+            - name: dashboards
+              containerPort: 5601
+          readinessProbe:
+            httpGet:
+              path: /api/status
+              port: dashboards
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 30
 ---
 apiVersion: v1
 kind: Service
@@ -59,3 +76,6 @@ spec:
     - name: http
       port: {{ .Values.opensearch.service.port }}
       targetPort: http
+    - name: dashboards
+      port: {{ .Values.opensearch.service.dashboardsPort }}
+      targetPort: dashboards

@@ -122,14 +122,15 @@ Forward ports to access the API and UIs:
 kubectl -n observability port-forward service/document-server 8000:8000
 kubectl -n observability port-forward service/prometheus 9090:9090
 kubectl -n observability port-forward service/jaeger 16686:16686
-kubectl -n observability port-forward service/opensearch 9200:9200
+kubectl -n observability port-forward service/opensearch 5601:5601
 ```
 
 Open the API at [http://localhost:8000/](http://localhost:8000/) (or
 [http://localhost:8000/docs](http://localhost:8000/docs)),
 Prometheus at [http://localhost:9090](http://localhost:9090), and Jaeger at
-[http://localhost:16686](http://localhost:16686). OpenSearch is available
-inside the cluster at
+[http://localhost:16686](http://localhost:16686). OpenSearch Dashboards is
+available at [http://localhost:5601](http://localhost:5601). OpenSearch is
+available inside the cluster at
 `http://opensearch.observability.svc.cluster.local:9200`.
 
 ## Run the API locally
