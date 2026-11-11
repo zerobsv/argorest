@@ -29,7 +29,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 
-DB_PATH = Path(os.getenv("DATABASE_PATH", "documents.db"))
+DB_PATH = Path(os.getenv("DATABASE_PATH", "/app/data/documents.db"))
 OTEL_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
 RESOURCE = Resource.create({"service.name": "document-server"})
 

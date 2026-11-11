@@ -9,8 +9,14 @@ The FastAPI module now lives in `app/main.py`; the image runs it as
 to your cluster. For a local kind cluster:
 
 ```sh
-docker build -t document-server:1.0.0 .
-kind load docker-image document-server:1.0.0
+docker build -t document-server:1.5.0 .
+docker tag document-api:1.0.0 YOUR_REGISTRY/document-api:1.0.0
+docker push YOUR_REGISTRY/document-api:1.0.0
+docker run --rm -p 8000:8000 document-server:1.5.0
+```
+
+```sh
+kind load docker-image document-server:1.5.0
 helm lint ./helm/telemetry
 helm lint ./helm/document-server
 helm upgrade --install telemetry ./helm/telemetry --namespace observability --create-namespace
@@ -33,7 +39,59 @@ storage, resources, and image registries appropriately before production use.
 OpenSearch nodes may require the host's `vm.max_map_count` to be at least
 `262144`.
 
+To access the API locally:
+
+```sh
+kubectl -n document-api port-forward svc/document-server 8000:8000
+```
+
+Then visit `http://localhost:8000/docs`.
+
+## Run on Minikube
+
+```
+minikube start -p devx --driver=docker --nodes=3 --memory=4096m
+
+minikube image load -p devx document-server:1.5.0
+
+Cleanup:
+
+minikube delete -p devx
+```
+
+
+## Install and Run Argo CD
+
+```
+kubectl create ns argocd
+
+kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+Cleanup:
+
+kubectl delete -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+kubectl delete ns argocd
+```
+
+## Install Argo CD CLI
+
+```
+curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+rm argocd-linux-amd64
+```
+
 ## Staged deployment with Argo CD
+
+#### Get admin password
+```
+argocd admin initial-password -n argocd
+```
 
 [argocd/application-set.yaml](./argocd/application-set.yaml)
 uses an ApplicationSet `RollingSync` strategy with two stages: telemetry
@@ -120,4 +178,13 @@ curl -X POST http://localhost:8000/documents   -H 'Content-Type: application/jso
 
 ```
 curl -k http://localhost:8000/document/1
+```
+
+#### Demo Curl Requests:
+
+```
+curl -X POST http://localhost:8000/documents   -H 'Content-Type: application/json'   -d '{"id":1,"name":"axyz","phone_name":["apple"],"location":"string"}'   
+curl -X POST http://localhost:8000/documents   -H 'Content-Type: application/json'   -d '{"id":2,"name":"bxyz","phone_name":["apple"],"location":"string"}'   
+curl -k http://localhost:8000/document/1
+curl -k http://localhost:8000/document/2
 ```

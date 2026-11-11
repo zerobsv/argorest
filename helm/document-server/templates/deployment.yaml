@@ -15,7 +15,26 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       securityContext:
+        runAsUser: 10001
         fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+        - name: initialize-data
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mkdir -p /app/data
+              touch /app/data/documents.db
+              chmod -R 750 /app/data
+              chown -R 10001:10001 /app/data
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: {{ .Values.volume.name }}
+              mountPath: /app/data
       containers:
         - name: api
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -25,12 +44,12 @@ spec:
               containerPort: 8000
           env:
             - name: DATABASE_PATH
-              value: /data/documents.db
+              value: /app/data/documents.db
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://localhost:4317
           volumeMounts:
-            - name: document-data
-              mountPath: /data
+            - name: {{ .Values.volume.name }}
+              mountPath: /app/data
           readinessProbe:
             httpGet:
               path: /openapi.json
@@ -59,7 +78,7 @@ spec:
               mountPath: /etc/otelcol-contrib
               readOnly: true
       volumes:
-        - name: document-data
+        - name: {{ .Values.volume.name }}
           persistentVolumeClaim:
             claimName: document-server-data
         - name: otel-collector-config
