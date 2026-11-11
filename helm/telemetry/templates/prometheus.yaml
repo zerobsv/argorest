@@ -16,16 +16,16 @@ spec:
     spec:
       initContainers:
         - name: initialize-prometheus
-          image: {{ .Values.prometheus.image | quote }}
+          image: {{ .Values.prometheus.initContainerImage | quote }}
           imagePullPolicy: {{ .Values.prometheus.pullPolicy }}
           command:
             - /bin/sh
             - -c
             - |
               chmod -R 750 /prometheus
-              chown -R nobody:nobody /prometheus
+              chown -R 65534:65534 /prometheus
               chmod 440 /etc/prometheus/prometheus.yml
-              chown nobody:nobody /etc/prometheus/prometheus.yml
+              chown 65534:65534 /etc/prometheus/prometheus.yml
       containers:
         - name: prometheus
           image: {{ .Values.prometheus.image | quote }}
