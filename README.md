@@ -39,14 +39,6 @@ storage, resources, and image registries appropriately before production use.
 OpenSearch nodes may require the host's `vm.max_map_count` to be at least
 `262144`.
 
-To access the API locally:
-
-```sh
-kubectl -n document-api port-forward svc/document-server 8000:8000
-```
-
-Then visit `http://localhost:8000/docs`.
-
 ## Run on Minikube
 
 ```
@@ -130,6 +122,7 @@ Forward ports to access the API and UIs:
 kubectl -n observability port-forward service/document-server 8000:8000
 kubectl -n observability port-forward service/prometheus 9090:9090
 kubectl -n observability port-forward service/jaeger 16686:16686
+kubectl -n observability port-forward service/opensearch 9200:9200
 ```
 
 Open the API at [http://localhost:8000/](http://localhost:8000/) (or
