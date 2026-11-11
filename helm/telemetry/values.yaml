@@ -1,6 +1,6 @@
 prometheus:
   image: prom/prometheus:v3.2.1
-  initContainerImage: busybox:1.36
+  initContainerImage: bash:latest
   pullPolicy: IfNotPresent
   service:
     type: ClusterIP
