@@ -1,5 +1,6 @@
 prometheus:
   image: prom/prometheus:v3.2.1
+  pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 9090

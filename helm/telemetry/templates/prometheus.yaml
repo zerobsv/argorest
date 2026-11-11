@@ -14,6 +14,18 @@ spec:
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      initContainers:
+        - name: initialize-prometheus
+          image: {{ .Values.prometheus.image | quote }}
+          imagePullPolicy: {{ .Values.prometheus.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              chmod -R 750 /prometheus
+              chown -R nobody:nobody /prometheus
+              chmod 440 /etc/prometheus/prometheus.yml
+              chown nobody:nobody /etc/prometheus/prometheus.yml
       containers:
         - name: prometheus
           image: {{ .Values.prometheus.image | quote }}
