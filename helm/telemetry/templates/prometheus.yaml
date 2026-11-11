@@ -14,6 +14,10 @@ spec:
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      securityContext:
+        runAsUser: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
       initContainers:
         - name: initialize-prometheus
           image: {{ .Values.prometheus.initContainerImage }}
@@ -30,6 +34,13 @@ spec:
               chown -R 65534:65534 /prometheus
               chmod 440 /etc/prometheus/prometheus.yml
               chown 65534:65534 /etc/prometheus/prometheus.yml
+                  securityContext:
+          runAsUser: 0
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+            - name: data
+              mountPath: /prometheus
       containers:
         - name: prometheus
           image: {{ .Values.prometheus.image | quote }}
